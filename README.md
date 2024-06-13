@@ -28,6 +28,7 @@
 - `vec2pg.py` main executable file.
 - `config.json` user-editable config file, just a JSON.
 - `plugins/*.py` plugins, just a Python module.
+- `tests/tests.py` tests.
 
 
 # Extending
