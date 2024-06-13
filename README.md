@@ -7,6 +7,7 @@
 - Python >= 3.10
 - [Typer-slim](https://typer.tiangolo.com/#typer-slim)
 - [Pinecone-client](https://github.com/pinecone-io/pinecone-python-client)
+- [Psycopg](https://www.psycopg.org/psycopg3/docs)
 - Valid `config.json` file with working [API keys](https://docs.pinecone.io/guides/get-started/quickstart#2-get-your-api-key), etc.
 
 
