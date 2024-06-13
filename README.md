@@ -37,6 +37,13 @@
 - `tests/tests.py` tests.
 
 
+# Troubleshooting
+
+- Check that Pinecone dependency is `pinecone-client`, not `pinecone`.
+- Check that Psycopg3 dependency is `psicopg`, not `psicopg2`.
+- Check your config.
+
+
 # Extending
 
 - [Minimal noop plugin code](https://github.com/supabase-community/vec2pg/blob/main/tests/tests.py#L17)
