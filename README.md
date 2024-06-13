@@ -23,6 +23,11 @@
 - `python tests/tests.py` from root folder, [see tests folder](https://github.com/supabase-community/vec2pg/tree/main/tests).
 
 
+# Extending
+
+- [Minimal noop plugin code](https://github.com/supabase-community/vec2pg/blob/main/tests/tests.py#L17)
+
+
 # Stars
 
 ![](https://starchart.cc/supabase-community/vec2pg.svg)
