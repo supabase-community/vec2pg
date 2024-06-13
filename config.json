@@ -1,1 +1,8 @@
-{}
+{
+  "pinecone": {
+    "apikey": "",
+    "namespace": "",
+    "index": "",
+    "table_name": ""
+  }
+}
