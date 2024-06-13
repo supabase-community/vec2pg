@@ -1,6 +1,7 @@
 # vec2pg
 
-- WIP
+- Simple extendable CLI tool to migrate data into [Supabase](https://supabase.com).
+
 
 # Requisites
 
