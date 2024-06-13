@@ -1,6 +1,6 @@
 import json
 
-import psycopg                 # pip install psycopg
+import psycopg                 # pip install psycopg[binary]
 from pinecone import Pinecone  # pip install pinecone-client
 
 
