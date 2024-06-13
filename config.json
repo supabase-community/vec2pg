@@ -1,8 +1,12 @@
 {
   "pinecone": {
-    "apikey": "",
-    "namespace": "",
-    "index": "",
-    "table_name": ""
+    "apikey"    : "",
+    "namespace" : "",
+    "index"     : "",
+    "table_name": "",
+    "hostname"  : "",
+    "username"  : "",
+    "database"  : "",
+    "password"  : ""
   }
 }
