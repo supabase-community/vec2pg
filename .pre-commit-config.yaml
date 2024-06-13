@@ -21,7 +21,7 @@ repos:
                     "--trailing-comma",
                     "--force-grid-wrap=0",
                     "--use-parentheses",
-                    "--line-width=88",
+                    "--line-width=99",
                 ]
 
     - repo: https://github.com/myint/autoflake.git
@@ -39,13 +39,3 @@ repos:
       rev: "24.4.0"
       hooks:
           - id: black
-
-    - repo: https://github.com/PyCQA/prospector
-      rev: 1.10.3
-      hooks:
-          - id: prospector
-            args: [
-              '--max-line-length=999',
-              '--without-tool=pylint',
-              '--full-pep8',
-            ]
