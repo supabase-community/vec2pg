@@ -28,7 +28,6 @@ def load_plugins(plugins_dir: str) -> dict:
 
 
 def main(plugin_name: str, config_json: str):
-    """Main entry func"""
     # Validate args
     assert len(plugin_name) > 0, "Plugin name must not be empty string."
     assert os.path.exists(config_json), f"Config file not found: {config_json}"
