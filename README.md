@@ -20,7 +20,7 @@
 
 # Tests
 
-- `python tests/tests.py` from root folder.
+- `python tests/tests.py` from root folder, [see tests folder](https://github.com/supabase-community/vec2pg/tree/main/tests).
 
 
 # Stars
