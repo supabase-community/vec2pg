@@ -3,6 +3,12 @@
 - Simple extendable CLI tool to migrate data into [Supabase](https://supabase.com).
 
 
+# Use
+
+- `python ./vec2pg.py pinecone "/path/to/config.json"`
+- `python ./vec2pg.py --help` for a help message.
+
+
 # Requisites
 
 - Python >= 3.10
