@@ -25,8 +25,9 @@ def _create_connection(database_config):
     username = database_config.get("username")
     database = database_config.get("database")
     password = database_config.get("password")
+    port = database_config.get("port")
     return psycopg.connect(
-        f"host={hostname} dbname={database} user={username} password={password}"
+        f"host={hostname} dbname={database} user={username} password={password} port={port}"
     )
 
 
@@ -69,6 +70,7 @@ def main(config):
             "username": config.get("username"),
             "database": config.get("database"),
             "password": config.get("password"),
+            "port": config.get("port"),
         }
 
         # Init Pinecone client and index
