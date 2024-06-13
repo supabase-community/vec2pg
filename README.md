@@ -23,6 +23,13 @@
 - `python tests/tests.py` from root folder, [see tests folder](https://github.com/supabase-community/vec2pg/tree/main/tests).
 
 
+# Structure
+
+- `vec2pg.py` main executable file.
+- `config.json` user-editable config file, just a JSON.
+- `plugins/*.py` plugins, just a Python module.
+
+
 # Extending
 
 - [Minimal noop plugin code](https://github.com/supabase-community/vec2pg/blob/main/tests/tests.py#L17)
