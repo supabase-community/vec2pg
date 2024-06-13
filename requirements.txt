@@ -1,1 +1,9 @@
-# WIP
+typer-slim
+pinecone-client
+pre-commit
+black
+flake8
+isort
+commitizen
+python-semantic-release
+psycopg
