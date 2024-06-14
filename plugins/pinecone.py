@@ -38,9 +38,10 @@ def _create_embedding_tables(cursor, table_name, dimension):
     cursor.execute(
         f"CREATE TABLE IF NOT EXISTS {table_name}_json_embeddings (model jsonb);"
     )
-    cursor.execute(
-        f"CREATE TABLE IF NOT EXISTS {table_name}_vector_embeddings ( model float array[{dimension}], label jsonb);"
-    )
+    # sql_create_table_use_float_array = f"CREATE TABLE IF NOT EXISTS {table_name}_vector_embeddings ( model float array[{dimension}], label jsonb);"
+    sql_create_table_use_vector = f"CREATE TABLE IF NOT EXISTS {table_name}_vector_embeddings ( model vector({dimension}), label jsonb);"
+    queri = sql_create_table_use_vector
+    cursor.execute(queri)
 
 
 def _load_embeddings(cursor, table_name, json_data, dimension):
@@ -52,8 +53,10 @@ def _load_embeddings(cursor, table_name, json_data, dimension):
 
 def _cleanup_embedding_table(cursor, table_name, dimension):
     """Clean up embedding table, insert embeddings into vector table"""
-    script = f"insert into {table_name}_vector_embeddings select array(select jsonb_array_elements_text(js.value[0]))::float[{dimension}], js.value[1] from {table_name}_json_embeddings p cross join lateral jsonb_each(p.model::jsonb) js;"
-    cursor.execute(script)
+    # sql_insert_use_float_array = f"insert into {table_name}_vector_embeddings select array(select jsonb_array_elements_text(js.value[0]))::float[{dimension}], js.value[1] from {table_name}_json_embeddings p cross join lateral jsonb_each(p.model::jsonb) js;"
+    sql_insert_use_vector = f"insert into {table_name}_vector_embeddings select (array(select jsonb_array_elements_text(js.value[0]))::float[{dimension}])::vector({dimension}), js.value[1] from {table_name}_json_embeddings p cross join lateral jsonb_each(p.model) js;"
+    queri = sql_insert_use_vector
+    cursor.execute(queri)
     cursor.execute(f"DROP TABLE IF EXISTS {table_name}_json_embeddings;")
 
 
