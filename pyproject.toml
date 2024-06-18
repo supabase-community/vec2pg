@@ -3,6 +3,7 @@ name = "vec2pg"
 version = "2024.06.0"
 description = "vec2pg"
 authors = []
+packages = [{ include = "vec2pg", from = "src" }]
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -20,6 +21,9 @@ pytest-cov = "^5.0.0"
 commitizen = "^3.22.0"
 python-semantic-release = "^9.4.2"
 python-dotenv = "^1.0.1"
+
+[tool.poetry.scripts]
+vec2pg = "vec2pg.cli:app"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

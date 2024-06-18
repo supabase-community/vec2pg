@@ -1,0 +1,37 @@
+name: pre-commit
+
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'  # Specify your Python version
+
+      - name: Install Poetry
+        run: curl -sSL https://install.python-poetry.org | python3 -
+
+      - name: Configure Poetry to install to /home/runner/.local/bin
+        run: |
+          echo 'export PATH="$HOME/.local/bin:$PATH"' >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Install pre-commit hooks
+        run: poetry run pre-commit install
+
+      - name: Run pre-commit
+        run: poetry run pre-commit run --all-files

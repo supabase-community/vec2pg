@@ -1,7 +1,7 @@
 import json
 
-import psycopg                 # pip install psycopg[binary]
-from pinecone import Pinecone  # pip install pinecone-client
+import psycopg
+from pinecone import Pinecone
 
 
 def _get_index_data(index, namespace, ids):
