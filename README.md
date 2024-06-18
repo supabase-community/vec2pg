@@ -28,7 +28,7 @@
 
 ---
 
-A CLI for migrating vector workloads from [pinecone](https://www.pinecone.io/) to [pgvector](https://github.com/pgvector/pgvector) on [Supabase](https://supabase.com).
+A CLI for migrating vector workloads from [Pinecone](https://www.pinecone.io/) to [Pgvector](https://github.com/pgvector/pgvector) on [Supabase](https://supabase.com).
 
 Additional data sources will be added soon.
 
