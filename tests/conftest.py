@@ -27,7 +27,7 @@ def maybe_start_pg(postgres_connection_string) -> Generator[None, None, None]:
     to using the PYTEST_DB connection string"""
 
     container_name = "vec2pg_pg"
-    image = "supabase/postgres:15.1.1.68"
+    image = "pgvector/pgvector:0.7.2-pg15"
 
     connection_template = "postgresql://{user}:{pw}@{host}:{port:d}/{db}"
     conn_args = parse(connection_template, postgres_connection_string)
