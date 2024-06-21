@@ -1,132 +1,88 @@
-import json
+from typing import Annotated, Optional
 
+import numpy as np
 import psycopg
+import typer
+from pgvector.psycopg import register_vector
 from pinecone import Pinecone
+from tqdm import tqdm
+
+app = typer.Typer()
+
+# Env Var Names
+PINECONE_APIKEY = "PINECONE_APIKEY"
+PINECONE_NAMESPACE = "PINECONE_NAMESPACE"
+PINECONE_INDEX = "PINECONE_INDEX"
+POSTGRES_CONNECTION_STRING = "POSTGRES_CONNECTION_STRING"
+POSTGRES_SCHEMA_NAME = "POSTGRES_SCHEMA_NAME"
+POSTGRES_TABLE_NAME = "POSTGRES_TABLE_NAME"
 
 
-def _get_index_data(index, namespace, ids):
-    """Fetch data from the Pinecone index"""
-    return index.fetch(namespace=namespace, ids=ids)
+def to_qualified_table_name(pinecone_index, pinecone_namespace) -> str:
+    table_name = f"{pinecone_index}_{pinecone_namespace or 'all'}"
+    return f'vec2pg."{table_name}"'
 
 
-def _load_vectors(index, namespace, pagination_token=None):
-    """Get vectors from the Pinecone index"""
-    return index.list_paginated(namespace=namespace, pagination_token=pagination_token)
+@app.command()
+def migrate(
+    pinecone_apikey: Annotated[str, typer.Argument(envvar=PINECONE_APIKEY)],
+    pinecone_index: Annotated[str, typer.Argument(envvar=PINECONE_INDEX)],
+    pinecone_namespace: Annotated[
+        Optional[str], typer.Argument(envvar=PINECONE_NAMESPACE)
+    ],
+    postgres_connection_string: Annotated[
+        str, typer.Argument(envvar=POSTGRES_CONNECTION_STRING)
+    ],
+):
+    # Init Pinecone client and index
+    client = Pinecone(api_key=pinecone_apikey)
+    index = client.Index(pinecone_index)
+    vector_count = index.describe_index_stats()["total_vector_count"]
 
+    # Prep the database with minimal requirements
+    conn = psycopg.connect(postgres_connection_string, autocommit=True)
+    conn.execute("create extension if not exists vector")
+    conn.execute("create schema if not exists vec2pg")
 
-def _load_dimensions(index):
-    """Get dimensions from the Pinecone index"""
-    return index.describe_index_stats()["dimension"]
-
-
-def _create_connection(database_config):
-    """Connect to the database"""
-    hostname = database_config.get("hostname")
-    username = database_config.get("username")
-    database = database_config.get("database")
-    password = database_config.get("password")
-    port = database_config.get("port")
-    return psycopg.connect(
-        f"host={hostname} dbname={database} user={username} password={password} port={port}"
+    # Setup the Postgres table
+    qualified_name = to_qualified_table_name(pinecone_index, pinecone_namespace)
+    conn.execute(f"drop table if exists {qualified_name}")  # type: ignore
+    create_table_query = (
+        f"create table {qualified_name} (id text, values vector, metadata json)"
     )
+    conn.execute(create_table_query)  # type: ignore
 
+    # Make psycopg aware of the vector type
+    register_vector(conn)
 
-def _create_embedding_tables(cursor, table_name, dimension):
-    """Create tables for embeddings"""
-    cursor.execute(f"DROP TABLE IF EXISTS {table_name}_json_embeddings;")
-    cursor.execute(f"DROP TABLE IF EXISTS {table_name}_vector_embeddings;")
-    cursor.execute(
-        f"CREATE TABLE IF NOT EXISTS {table_name}_json_embeddings (model jsonb);"
-    )
-    # sql_create_table_use_float_array = f"CREATE TABLE IF NOT EXISTS {table_name}_vector_embeddings ( model float array[{dimension}], label jsonb);"
-    sql_create_table_use_vector = f"CREATE TABLE IF NOT EXISTS {table_name}_vector_embeddings ( model vector({dimension}), label jsonb);"
-    queri = sql_create_table_use_vector
-    cursor.execute(queri)
+    # Progress bar
+    with tqdm(total=vector_count) as pbar:
 
+        # Iterate through the pinecone index
+        for ids in index.list(
+            namespace=pinecone_namespace,
+            limit=100,
+        ):
+            batch_result = index.fetch(ids, namespace=pinecone_namespace)
+            records = [
+                (rec["id"], np.array(rec["values"]), rec.get("metadata"))
+                for rec in batch_result.vectors.values()
+            ]
 
-def _load_embeddings(cursor, table_name, json_data, dimension):
-    """Load embeddings into JSON"""
-    with cursor.copy(f"COPY {table_name}_json_embeddings FROM STDIN") as copy:
-        copy.set_types(["jsonb"])
-        copy.write_row([json_data])
+            cur = conn.cursor()
 
+            with cur.copy(
+                f"""
+                copy {qualified_name}(id, values, metadata)
+                from stdin with (format binary)
+                """  # type: ignore
+            ) as copy:
+                copy.set_types(["text", "vector", "json"])
 
-def _cleanup_embedding_table(cursor, table_name, dimension):
-    """Clean up embedding table, insert embeddings into vector table"""
-    # sql_insert_use_float_array = f"insert into {table_name}_vector_embeddings select array(select jsonb_array_elements_text(js.value[0]))::float[{dimension}], js.value[1] from {table_name}_json_embeddings p cross join lateral jsonb_each(p.model::jsonb) js;"
-    sql_insert_use_vector = f"insert into {table_name}_vector_embeddings select (array(select jsonb_array_elements_text(js.value[0]))::float[{dimension}])::vector({dimension}), js.value[1] from {table_name}_json_embeddings p cross join lateral jsonb_each(p.model) js;"
-    queri = sql_insert_use_vector
-    cursor.execute(queri)
-    cursor.execute(f"DROP TABLE IF EXISTS {table_name}_json_embeddings;")
+                for rec in records:
+                    copy.write_row(rec)
 
+                while conn.pgconn.flush() == 1:
+                    pass
 
-def main(config):
-    result = False
-    try:
-        # Get config
-        apikey = config.get("apikey")
-        namespace = config.get("namespace")
-        pinecone_index = config.get("index")
-        database_config = {
-            "table_name": config.get("table_name"),
-            "hostname": config.get("hostname"),
-            "username": config.get("username"),
-            "database": config.get("database"),
-            "password": config.get("password"),
-            "port": config.get("port"),
-        }
-
-        # Init Pinecone client and index
-        client = Pinecone(api_key=apikey)
-        index = client.Index(pinecone_index)
-
-        # Load vectors from Pinecone index
-        json_batch = dict()
-        result_set = _load_vectors(index, namespace)
-        while len(result_set.vectors) > 0:
-            vectors = (item.id for item in result_set["vectors"])
-            batch = _get_index_data(index, namespace, list(vectors))
-            json_batch.update(
-                {
-                    v["id"]: [v["values"], v["metadata"]]
-                    for k, v in batch.vectors.items()
-                }
-            )
-
-            if result_set.pagination:
-                result_set = _load_vectors(index, namespace, result_set.pagination.next)
-            else:
-                break
-
-        dimension = _load_dimensions(index)
-        table = database_config["table_name"]
-
-        # Create a connection and cursor to database
-        conn = _create_connection(database_config)
-        cursor = conn.cursor()
-
-        # Create table for embeddings
-        _create_embedding_tables(cursor, table, dimension)
-        conn.commit()
-
-        # Load embeddings into JSON table
-        _load_embeddings(cursor, table, json.dumps(json_batch), dimension)
-        conn.commit()
-
-        # Move embeddings from JSON table to vector table
-        cursor = conn.cursor()
-        _cleanup_embedding_table(cursor, table, dimension)
-        conn.commit()
-
-        # Close database connection
-        cursor.close()
-        conn.close()
-
-    except Exception:
-        # Something went wrong.
-        result = False
-    else:
-        # Everything went OK.
-        result = True
-    finally:
-        return result
+            pbar.update(len(records))
