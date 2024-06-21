@@ -1,22 +1,19 @@
-from os import environ
-import psycopg
-import pytest
-import time
-import os
 import json
-from parse import parse
-import time
-
-import subprocess
+import os
 import random
 import string
+import subprocess
+import time
+from os import environ
 from typing import Generator
 
-from vec2pg.plugins import pinecone
-
-
-from pinecone.data.index import Index
+import psycopg
+import pytest
+from parse import parse
 from pinecone import Pinecone, ServerlessSpec
+from pinecone.data.index import Index
+
+from vec2pg.plugins import pinecone
 
 
 @pytest.fixture(scope="session")

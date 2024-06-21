@@ -1,6 +1,7 @@
 from pinecone import Pinecone
 from pinecone.data.index import Index
 from typer.testing import CliRunner
+
 from vec2pg.cli import app
 from vec2pg.plugins.pinecone import to_qualified_table_name
 
