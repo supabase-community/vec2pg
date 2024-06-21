@@ -1,9 +1,11 @@
+from os import environ
+
 from pinecone import Pinecone
 from pinecone.data.index import Index
 from typer.testing import CliRunner
 
 from vec2pg.cli import app
-from vec2pg.plugins.pinecone import to_qualified_table_name
+from vec2pg.plugins.pinecone import PINECONE_APIKEY, to_qualified_table_name
 
 
 def test_pinecone_subcommand_does_not_error() -> None:
@@ -20,7 +22,6 @@ def test_index_is_good(pinecone_index: Index) -> None:
 
 
 def test_pinecone_migrate(
-    pinecone_apikey,
     pinecone_namespace,
     pinecone_index_name,
     postgres_connection_string,
@@ -32,7 +33,7 @@ def test_pinecone_migrate(
         [
             "pinecone",
             "migrate",
-            pinecone_apikey,
+            environ[PINECONE_APIKEY],
             pinecone_index_name,
             pinecone_namespace,
             postgres_connection_string,

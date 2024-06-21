@@ -113,18 +113,8 @@ def cursor(maybe_start_pg: None, postgres_connection_string: str):
 
 
 @pytest.fixture(scope="session")
-def pinecone_apikey() -> Generator[str, None, None]:
-    try:
-        yield environ[pinecone.PINECONE_APIKEY]
-    except KeyError:
-        raise Exception(
-            "Pinecone APIKEY required to run the test suite. Create an API key and store it in an environment variable named {pinecone.PINECONE_APIKEY}. A free account is sufficient"
-        )
-
-
-@pytest.fixture(scope="session")
-def pinecone_client(pinecone_apikey) -> Pinecone:
-    return Pinecone(api_key=pinecone_apikey)
+def pinecone_client() -> Pinecone:
+    return Pinecone(api_key=environ[pinecone.PINECONE_APIKEY])
 
 
 @pytest.fixture(scope="session")
