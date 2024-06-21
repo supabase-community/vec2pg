@@ -11,6 +11,21 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.10', '3.12']
+
+    services:
+      postgres:
+        image: supabase/postgres:15.1.1.68
+        env:
+          POSTGRES_DB: v2p
+          POSTGRES_HOST: localhost
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+        ports:
+        - 5629:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
       - name: Checkout code
@@ -19,7 +34,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.8'  # Specify your Python version
+          python-version: ${{ matrix.python-version }}
 
       - name: Install Poetry
         run: curl -sSL https://install.python-poetry.org | python3 -
