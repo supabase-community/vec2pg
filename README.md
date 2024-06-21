@@ -34,32 +34,57 @@ Additional data sources will be added soon.
 
 # Use
 
-- `vec2pg.py --help` for a help message.
+```
+vec2pg --help
+```
+
 ```                                                                                                                                           
- Usage: vec2pg [OPTIONS] PLUGIN:{pinecone} CONFIG_JSON                                                                                       
-                                                                                                                                             
-╭─ Arguments ─────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ *    plugin           PLUGIN:{pinecone}  [default: None] [required]                                             │
-│ *    config_json      PATH               [default: None] [required]                                             │
-╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-╭─ Options ───────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ --install-completion          Install completion for the current shell.                                         │
-│ --show-completion             Show completion for the current shell, to copy it or customize the installation.  │
-│ --help                        Show this message and exit.                                                       │
-╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+ Usage: vec2pg [OPTIONS] COMMAND [ARGS]...                                                                               
+                                                                                                                         
+╭─ Options ──────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ --install-completion          Install completion for the current shell.                                        │
+│ --show-completion             Show completion for the current shell, to copy it or customize the installation. │
+│ --help                        Show this message and exit.                                                      │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Commands ─────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ pinecone                                                                                                       │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+```
+
+## Pinecone
+
+```
+vec2pg pinecone migrate --help
+```
+
+```
+
+ Usage: vec2pg pinecone migrate [OPTIONS] PINECONE_APIKEY PINECONE_INDEX                                                 
+                                PINECONE_NAMESPACE POSTGRES_CONNECTION_STRING                                            
+                                                                                                                         
+╭─ Arguments ───────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ *    pinecone_apikey                 TEXT  [env var: PINECONE_APIKEY] [default: None] [required]              │
+│ *    pinecone_index                  TEXT  [env var: PINECONE_INDEX] [default: None] [required]               │
+│ *    pinecone_namespace              TEXT  [env var: PINECONE_NAMESPACE] [default: None] [required]           │
+│ *    postgres_connection_string      TEXT  [env var: POSTGRES_CONNECTION_STRING] [default: None] [required]   │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Options ──────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ --help          Show this message and exit.                                                                    │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
 
-- `vec2pg pinecone "/path/to/config.json"`
-
-
 # Requisites
-
 - Python >= 3.8
-- Valid `config.json` file with working [API keys](https://docs.pinecone.io/guides/get-started/quickstart#2-get-your-api-key), etc.
-
 
 # Contributing
+
+To run the tests you will need
+- Python >= 3.8
+- docker
+- [Pinecone API key](https://docs.pinecone.io/guides/get-started/authentication#find-your-pinecone-api-key)
+
+The Pinecone API key should be stored as an environment variable `PINECONE_APIKEY`
 
 Run the tests
 ```
