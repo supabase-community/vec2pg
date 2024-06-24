@@ -50,4 +50,4 @@ jobs:
       - name: Run tests
         run: poetry run pytest
         env:
-          PINECONE_APIKEY: ${{secrets.PINECONE_APIKEY}}
+          PINECONE_API_KEY: ${{secrets.PINECONE_API_KEY}}

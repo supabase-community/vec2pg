@@ -28,11 +28,12 @@
 
 ---
 
-A CLI for migrating vector workloads from [Pinecone](https://www.pinecone.io/) to [Pgvector](https://github.com/pgvector/pgvector) on [Supabase](https://supabase.com).
+A CLI for migrating data from vector databases to [Supabase](https://supabase.com).
 
-Additional data sources will be added soon.
+Supported data sources include:
+- [Pinecone](https://docs.pinecone.io/home)
+- (more soon)
 
-# Use
 
 ```
 vec2pg --help
@@ -51,27 +52,66 @@ vec2pg --help
 ╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
-## Pinecone
+## Migration Guide
+
+### Pinecone
 
 ```
 vec2pg pinecone migrate --help
 ```
 
 ```
-
- Usage: vec2pg pinecone migrate [OPTIONS] PINECONE_APIKEY PINECONE_INDEX                                                 
-                                PINECONE_NAMESPACE POSTGRES_CONNECTION_STRING                                            
-                                                                                                                         
-╭─ Arguments ───────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ *    pinecone_apikey                 TEXT  [env var: PINECONE_APIKEY] [default: None] [required]              │
-│ *    pinecone_index                  TEXT  [env var: PINECONE_INDEX] [default: None] [required]               │
-│ *    pinecone_namespace              TEXT  [env var: PINECONE_NAMESPACE] [default: None] [required]           │
-│ *    postgres_connection_string      TEXT  [env var: POSTGRES_CONNECTION_STRING] [default: None] [required]   │
-╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-╭─ Options ──────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ --help          Show this message and exit.                                                                    │
-╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+ Usage: vec2pg pinecone migrate [OPTIONS] PINECONE_INDEX PINECONE_API_KEY                                                                      
+                                POSTGRES_CONNECTION_STRING                                                                                    
+                                                                                                                                              
+╭─ Arguments ──────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ *    pinecone_index                  TEXT  [default: None] [required]                                        │
+│ *    pinecone_api_key                 TEXT  [env var: PINECONE_API_KEY] [default: None] [required]           │
+│ *    postgres_connection_string      TEXT  [env var: POSTGRES_CONNECTION_STRING] [default: None] [required]  │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Options ────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ --help          Show this message and exit.                                                                  │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
+
+
+
+To migrate from [Pinecone serverless](https://www.pinecone.io/blog/serverless/) index to Postgres you'll need:  
+
+- A Pinecone API Key
+
+![pinecone api key](/assets/pinecone_api_key.png)
+
+- The Pinecone serverless index name
+
+![pinecone serverless index name](/assets/pinecone_index_name.png)
+
+- A Supabase instance
+
+From the Supabase instance we need the connection parameters. Retrive them [here](https://supabase.com/dashboard/project/_/settings/database)
+
+![supabsae connection parameters](/assets/supabase_connection_params.png)
+
+And substitute those values into a valid Postgres connection string
+```
+postgresql://<User>:<Password>@<Host>:<Port>/postgres
+```
+e.g.
+```
+postgresql://postgres.ahqsutirwnsocaaorimo:<Password>@aws-0-us-east-1.pooler.supabase.com:6543/postgres
+```
+
+Then we can call `vec2pg pinecone migrate` passing our values. You can supply all parameters directly to the CLI, but its a good idea to pass the Pinecone API Key (PINECONE_API_KEY) and Supabase connection string (POSTGRES_CONNECTION_STRING) as environment variables to avoid logging credentials to your shell's history.
+
+![sample output](/assets/pinecone_to_supabase_output.png)
+
+The CLI provies a progress bar to monitor the migration.
+
+On completion, you can view a copy of the Pinecone index data in Supabase Postgres at `vec2pg.<pinecone index name>`
+
+![view results](/assets/view_results.png)
+
+From there you can transform and manipulate the data in Postgres using SQL.
 
 
 # Requisites
@@ -84,7 +124,7 @@ To run the tests you will need
 - docker
 - [Pinecone API key](https://docs.pinecone.io/guides/get-started/authentication#find-your-pinecone-api-key)
 
-The Pinecone API key should be stored as an environment variable `PINECONE_APIKEY`
+The Pinecone API key should be stored as an environment variable `PINECONE_API_KEY`
 
 Run the tests
 ```
