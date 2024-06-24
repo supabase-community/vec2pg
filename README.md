@@ -52,6 +52,17 @@ vec2pg --help
 ╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
+## Installation
+
+Requirements:
+
+- Python >= 3.8
+
+```sh
+pip install vec2pg
+```
+
+
 ## Migration Guide
 
 ### Pinecone
