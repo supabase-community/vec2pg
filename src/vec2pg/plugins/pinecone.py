@@ -10,7 +10,7 @@ from tqdm import tqdm
 app = typer.Typer()
 
 # Env Var Names
-PINECONE_APIKEY = "PINECONE_APIKEY"
+PINECONE_API_KEY = "PINECONE_API_KEY"
 PINECONE_NAMESPACE = "PINECONE_NAMESPACE"
 PINECONE_INDEX = "PINECONE_INDEX"
 POSTGRES_CONNECTION_STRING = "POSTGRES_CONNECTION_STRING"
@@ -26,13 +26,13 @@ def to_qualified_table_name(pinecone_index: str) -> str:
 @app.command()
 def migrate(
     pinecone_index: str,
-    pinecone_apikey: Annotated[str, typer.Argument(envvar=PINECONE_APIKEY)],
+    pinecone_api_key: Annotated[str, typer.Argument(envvar=PINECONE_API_KEY)],
     postgres_connection_string: Annotated[
         str, typer.Argument(envvar=POSTGRES_CONNECTION_STRING)
     ],
 ):
     # Init Pinecone client and index
-    client = Pinecone(api_key=pinecone_apikey)
+    client = Pinecone(api_key=pinecone_api_key)
     index = client.Index(pinecone_index)
 
     index_description = index.describe_index_stats()

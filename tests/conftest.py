@@ -115,7 +115,7 @@ def cursor(maybe_start_pg: None, postgres_connection_string: str):
 
 @pytest.fixture(scope="session")
 def pinecone_client() -> Pinecone:
-    return Pinecone(api_key=environ[pinecone.PINECONE_APIKEY])
+    return Pinecone(api_key=environ[pinecone.PINECONE_API_KEY])
 
 
 @pytest.fixture(scope="session")
