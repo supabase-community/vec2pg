@@ -22,20 +22,18 @@ def test_index_is_good(pinecone_index: Index) -> None:
 
 
 def test_pinecone_migrate(
-    pinecone_namespace,
-    pinecone_index_name,
-    postgres_connection_string,
+    pinecone_index_name: str,
+    postgres_connection_string: str,
     cursor,
+    cli_runner: CliRunner,
 ) -> None:
-    runner = CliRunner()
-    result = runner.invoke(
+    result = cli_runner.invoke(
         app,
         [
             "pinecone",
             "migrate",
-            environ[PINECONE_APIKEY],
             pinecone_index_name,
-            pinecone_namespace,
+            environ[PINECONE_APIKEY],
             postgres_connection_string,
         ],
     )
@@ -43,7 +41,7 @@ def test_pinecone_migrate(
     print(result.stdout)
     assert result.exit_code == 0
 
-    qualified_name = to_qualified_table_name(pinecone_index_name, pinecone_namespace)
+    qualified_name = to_qualified_table_name(pinecone_index_name)
 
     recs = cursor.execute(
         f"select id, values, metadata from {qualified_name}"

@@ -12,6 +12,7 @@ import pytest
 from parse import parse
 from pinecone import Pinecone, ServerlessSpec
 from pinecone.data.index import Index
+from typer.testing import CliRunner
 
 from vec2pg.plugins import pinecone
 
@@ -118,11 +119,6 @@ def pinecone_client() -> Pinecone:
 
 
 @pytest.fixture(scope="session")
-def pinecone_namespace():
-    return "ns1"
-
-
-@pytest.fixture(scope="session")
 def pinecone_index_name():
     random_suffix = "".join(random.choice(string.ascii_lowercase) for _ in range(6))
     index_name = f"vec2pg-test-ix-{random_suffix}"
@@ -131,7 +127,7 @@ def pinecone_index_name():
 
 @pytest.fixture(scope="session")
 def pinecone_index(
-    pinecone_client, pinecone_namespace, pinecone_index_name
+    pinecone_client, pinecone_index_name
 ) -> Generator[Index, None, None]:
 
     pinecone_client.create_index(
@@ -143,16 +139,22 @@ def pinecone_index(
 
     index = pinecone_client.Index(pinecone_index_name)
 
+    # insert dummy records in 2 different namespaces
     index.upsert(
         vectors=[
             {"id": "vec1", "values": [1.0, 1.5], "metadata": {"key": "val"}},
             {"id": "vec2", "values": [2.0, 1.0]},
             {"id": "vec3", "values": [0.1, 3.0]},
+        ],
+        namespace="",
+    )
+    index.upsert(
+        vectors=[
             {"id": "vec4", "values": [1.0, -2.5]},
             {"id": "vec5", "values": [3.0, -2.0]},
             {"id": "vec6", "values": [0.5, -1.5]},
         ],
-        namespace=pinecone_namespace,
+        namespace="foo",
     )
 
     # Indexes are eventually consistent....
@@ -171,3 +173,8 @@ def pinecone_index(
         yield index
     finally:
         pinecone_client.delete_index(pinecone_index_name)
+
+
+@pytest.fixture(scope="session")
+def cli_runner():
+    yield CliRunner()
