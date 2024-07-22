@@ -6,6 +6,8 @@ import typer
 from pgvector.psycopg import register_vector
 from pinecone import Pinecone
 from tqdm import tqdm
+from vec2pg.common import POSTGRES_CONNECTION_STRING
+
 
 app = typer.Typer()
 
@@ -13,9 +15,6 @@ app = typer.Typer()
 PINECONE_API_KEY = "PINECONE_API_KEY"
 PINECONE_NAMESPACE = "PINECONE_NAMESPACE"
 PINECONE_INDEX = "PINECONE_INDEX"
-POSTGRES_CONNECTION_STRING = "POSTGRES_CONNECTION_STRING"
-POSTGRES_SCHEMA_NAME = "POSTGRES_SCHEMA_NAME"
-POSTGRES_TABLE_NAME = "POSTGRES_TABLE_NAME"
 
 
 def to_qualified_table_name(pinecone_index: str) -> str:

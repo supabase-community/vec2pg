@@ -77,7 +77,7 @@ vec2pg pinecone migrate --help
                                                                                                                                               
 ╭─ Arguments ──────────────────────────────────────────────────────────────────────────────────────────────────╮
 │ *    pinecone_index                  TEXT  [default: None] [required]                                        │
-│ *    pinecone_api_key                 TEXT  [env var: PINECONE_API_KEY] [default: None] [required]           │
+│ *    pinecone_api_key                TEXT  [env var: PINECONE_API_KEY] [default: None] [required]            │
 │ *    postgres_connection_string      TEXT  [env var: POSTGRES_CONNECTION_STRING] [default: None] [required]  │
 ╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
 ╭─ Options ────────────────────────────────────────────────────────────────────────────────────────────────────╮
@@ -123,6 +123,27 @@ On completion, you can view a copy of the Pinecone index data in Supabase Postgr
 ![view results](/assets/view_results.png)
 
 From there you can transform and manipulate the data in Postgres using SQL.
+
+### Qdrant
+
+```
+vec2pg qdrant migrate --help
+```
+
+```
+ Usage: vec2pg qdrant migrate [OPTIONS] QDRANT_COLLECTION_NAME QDRANT_URL
+                              QDRANT_API_KEY POSTGRES_CONNECTION_STRING 
+
+╭─ Arguments ──────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ *    qdrant_collection_name          TEXT  [default: None] [required]                                        │
+│ *    qdrant_url                      TEXT  [default: None] [required]                                        │
+│ *    qdrant_api_key                  TEXT  [env var: QDRANT_API_KEY] [default: None] [required]              │
+│ *    postgres_connection_string      TEXT  [env var: POSTGRES_CONNECTION_STRING] [default: None] [required]  │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Options ────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ --help          Show this message and exit.                                                                  │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+```
 
 
 # Requisites

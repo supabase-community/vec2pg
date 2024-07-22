@@ -1,16 +1,20 @@
 import json
 import os
 import random
+from typing import List
 import string
 import subprocess
 import time
 from os import environ
 from typing import Generator
 
+import numpy as np
 import psycopg
 import pytest
 from parse import parse
 from pinecone import Pinecone, ServerlessSpec
+from qdrant_client import QdrantClient
+from qdrant_client.models import Distance, VectorParams, PointStruct
 from pinecone.data.index import Index
 from typer.testing import CliRunner
 
@@ -22,16 +26,13 @@ def postgres_connection_string() -> Generator[str, None, None]:
     yield "postgresql://postgres:password@localhost:5629/v2p"
 
 
-@pytest.fixture(scope="session")
-def maybe_start_pg(postgres_connection_string) -> Generator[None, None, None]:
-    """Creates a postgres 12 docker container that can be connected
-    to using the PYTEST_DB connection string"""
+def maybe_start_container(
+    container_name: str, command: List[str]
+) -> Generator[None, None, None]:
+    """Creates a docker container if needed
 
-    container_name = "vec2pg_pg"
-    image = "pgvector/pgvector:0.7.2-pg15"
-
-    connection_template = "postgresql://{user}:{pw}@{host}:{port:d}/{db}"
-    conn_args = parse(connection_template, postgres_connection_string)
+    Note: Container must include a health check
+    """
 
     # Don't attempt to instantiate a container if
     # we're on CI
@@ -56,33 +57,8 @@ def maybe_start_pg(postgres_connection_string) -> Generator[None, None, None]:
         yield
         return
 
-    subprocess.call(
-        [
-            "docker",
-            "run",
-            "--rm",
-            "--name",
-            container_name,
-            "-p",
-            f"{conn_args['port']}:5432",  # type: ignore
-            "-d",
-            "-e",
-            f"POSTGRES_DB={conn_args['db']}",  # type: ignore
-            "-e",
-            f"POSTGRES_PASSWORD={conn_args['pw']}",  # type: ignore
-            "-e",
-            f"POSTGRES_USER={conn_args['user']}",  # type: ignore
-            "--health-cmd",
-            "pg_isready",
-            "--health-interval",
-            "3s",
-            "--health-timeout",
-            "3s",
-            "--health-retries",
-            "15",
-            image,
-        ]
-    )
+    subprocess.call(command)
+
     # Wait for postgres to become healthy
     for _ in range(10):
         out = subprocess.check_output(["docker", "inspect", container_name])
@@ -93,10 +69,78 @@ def maybe_start_pg(postgres_connection_string) -> Generator[None, None, None]:
         else:
             time.sleep(1)
     else:
-        raise Exception("Could not reach postgres comtainer. Check docker installation")
+        raise Exception("Could not reach comtainer. Check docker installation")
     yield
-    # subprocess.call(["docker", "stop", container_name])
     return
+
+
+@pytest.fixture(scope="session")
+def maybe_start_pg(postgres_connection_string) -> Generator[None, None, None]:
+    """Creates a docker container that can be connected"""
+
+    container_name = "vec2pg_pg"
+    image = "pgvector/pgvector:0.7.2-pg15"
+
+    connection_template = "postgresql://{user}:{pw}@{host}:{port:d}/{db}"
+    conn_args = parse(connection_template, postgres_connection_string)
+
+    command = [
+        "docker",
+        "run",
+        "--rm",
+        "--name",
+        container_name,
+        "-p",
+        f"{conn_args['port']}:5432",  # type: ignore
+        "-d",
+        "-e",
+        f"POSTGRES_DB={conn_args['db']}",  # type: ignore
+        "-e",
+        f"POSTGRES_PASSWORD={conn_args['pw']}",  # type: ignore
+        "-e",
+        f"POSTGRES_USER={conn_args['user']}",  # type: ignore
+        "--health-cmd",
+        "pg_isready",
+        "--health-interval",
+        "3s",
+        "--health-timeout",
+        "3s",
+        "--health-retries",
+        "15",
+        image,
+    ]
+
+    yield from maybe_start_container(container_name, command)
+
+
+@pytest.fixture(scope="session")
+def maybe_start_qdrant() -> Generator[None, None, None]:
+    """Creates a docker container that can be connected"""
+
+    container_name = "vec2pg_qdrant"
+    image = "qdrant/qdrant:latest"
+
+    command = [
+        "docker",
+        "run",
+        "--rm",
+        "--name",
+        container_name,
+        "-p",
+        "6333:6333",
+        "-d",
+        "--health-cmd",
+        "true",  # todo
+        "--health-interval",
+        "3s",
+        "--health-timeout",
+        "3s",
+        "--health-retries",
+        "2",
+        image,
+    ]
+
+    yield from maybe_start_container(container_name, command)
 
 
 @pytest.fixture(scope="session")
@@ -173,6 +217,38 @@ def pinecone_index(
         yield index
     finally:
         pinecone_client.delete_index(pinecone_index_name)
+
+
+@pytest.fixture(scope="session")
+def qdrant_collection_name() -> str:
+    random_suffix = "".join(random.choice(string.ascii_lowercase) for _ in range(6))
+    name = f"vec2pg-test-ix-{random_suffix}"
+    return name
+
+
+@pytest.fixture(scope="session")
+def qdrant_client(maybe_start_qdrant, qdrant_collection_name: str) -> QdrantClient:
+    client = QdrantClient("http://localhost:6333")
+
+    client.create_collection(
+        collection_name=qdrant_collection_name,
+        vectors_config=VectorParams(size=32, distance=Distance.COSINE),
+    )
+
+    vectors = np.random.rand(100, 32)
+
+    client.upsert(
+        collection_name=qdrant_collection_name,
+        points=[
+            PointStruct(
+                id=idx,
+                vector=vector.tolist(),
+                payload={"color": "red", "rand_number": idx % 10},
+            )
+            for idx, vector in enumerate(vectors)
+        ],
+    )
+    return client
 
 
 @pytest.fixture(scope="session")
