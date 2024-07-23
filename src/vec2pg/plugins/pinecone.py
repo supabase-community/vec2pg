@@ -6,8 +6,8 @@ import typer
 from pgvector.psycopg import register_vector
 from pinecone import Pinecone
 from tqdm import tqdm
-from vec2pg.common import POSTGRES_CONNECTION_STRING
 
+from vec2pg.common import POSTGRES_CONNECTION_STRING
 
 app = typer.Typer()
 

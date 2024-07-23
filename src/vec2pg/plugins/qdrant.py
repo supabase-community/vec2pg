@@ -4,8 +4,9 @@ import numpy as np
 import psycopg
 import typer
 from pgvector.psycopg import register_vector
-from tqdm import tqdm
 from qdrant_client import QdrantClient
+from tqdm import tqdm
+
 from vec2pg.common import POSTGRES_CONNECTION_STRING
 
 app = typer.Typer()

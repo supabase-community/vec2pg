@@ -1,21 +1,20 @@
 import json
 import os
 import random
-from typing import List
 import string
 import subprocess
 import time
 from os import environ
-from typing import Generator
+from typing import Generator, List
 
 import numpy as np
 import psycopg
 import pytest
 from parse import parse
 from pinecone import Pinecone, ServerlessSpec
-from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, VectorParams, PointStruct
 from pinecone.data.index import Index
+from qdrant_client import QdrantClient
+from qdrant_client.models import Distance, PointStruct, VectorParams
 from typer.testing import CliRunner
 
 from vec2pg.plugins import pinecone

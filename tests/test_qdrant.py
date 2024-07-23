@@ -1,8 +1,8 @@
-from typer.testing import CliRunner
 from qdrant_client import QdrantClient
-from vec2pg.plugins.qdrant import QDRANT_API_KEY, to_qualified_table_name
+from typer.testing import CliRunner
 
 from vec2pg.cli import app
+from vec2pg.plugins.qdrant import to_qualified_table_name
 
 
 def test_pinecone_subcommand_does_not_error() -> None:
