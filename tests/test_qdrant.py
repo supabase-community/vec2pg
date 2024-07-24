@@ -1,6 +1,7 @@
+import warnings
+
 from qdrant_client import QdrantClient
 from typer.testing import CliRunner
-import warnings
 
 from vec2pg.cli import app
 from vec2pg.plugins.qdrant import to_qualified_table_name
