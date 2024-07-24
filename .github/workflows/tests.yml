@@ -27,6 +27,10 @@ jobs:
         ports:
         - 5629:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      qdrant:
+        image: qdrant/qdrant:latest
+        ports:
+        - 6333:6333
 
     steps:
       - name: Checkout code
