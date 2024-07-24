@@ -178,7 +178,7 @@ Then we can call `vec2pg qdrant migrate` passing our values. You can supply all 
 
 ![sample output](/assets/qdrant_to_supabase_output.png)
 
-The CLI provies a progress bar to monitor the migration.
+The CLI provides a progress bar to monitor the migration.
 
 On completion, you can view a copy of the Pinecone index data in Supabase Postgres at `vec2pg.<qdrant collection name>`
 
