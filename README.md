@@ -161,7 +161,8 @@ The URL is the "Cluster URL". To find the collection name, select "Open Dashboar
 
 - A Supabase instance
 
-From the Supabase instance we need the connection parameters. Retrive them on the [database settings page](https://supabase.com/dashboard/project/_/settings/database)(https://supabase.com/dashboard/project/_/settings/database)
+From the Supabase instance, we need the connection parameters. Retrieve them on the [database settings page](https://supabase.com/dashboard/project/_/settings/database)(https://supabase.com/dashboard/project/_/settings/database)
+
 
 ![supabase connection parameters](/assets/supabase_connection_params.png)
 
