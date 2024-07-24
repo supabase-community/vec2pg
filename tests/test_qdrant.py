@@ -1,5 +1,6 @@
 from qdrant_client import QdrantClient
 from typer.testing import CliRunner
+import warnings
 
 from vec2pg.cli import app
 from vec2pg.plugins.qdrant import to_qualified_table_name
@@ -27,17 +28,22 @@ def test_qdrant_migrate(
     cli_runner: CliRunner,
 ) -> None:
     assert qdrant_client
-    result = cli_runner.invoke(
-        app,
-        [
-            "qdrant",
-            "migrate",
-            qdrant_collection_name,
-            "http://localhost:6333",
-            "",  # no API key needed in :memory: mode
-            postgres_connection_string,
-        ],
-    )
+
+    with warnings.catch_warnings():
+        # Ignore warning about passing an empty API Key since its local
+        warnings.simplefilter("ignore")
+
+        result = cli_runner.invoke(
+            app,
+            [
+                "qdrant",
+                "migrate",
+                qdrant_collection_name,
+                "http://localhost:6333",
+                "",  # no API key needed in :memory: mode
+                postgres_connection_string,
+            ],
+        )
 
     print(result.stdout)
     assert result.exit_code == 0

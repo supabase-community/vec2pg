@@ -227,6 +227,7 @@ def qdrant_collection_name() -> str:
 
 @pytest.fixture(scope="session")
 def qdrant_client(maybe_start_qdrant, qdrant_collection_name: str) -> QdrantClient:
+    maybe_start_qdrant  # type: ignore
     client = QdrantClient("http://localhost:6333")
 
     client.create_collection(
