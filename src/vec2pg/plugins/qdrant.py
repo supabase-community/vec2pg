@@ -49,7 +49,9 @@ def migrate(
     # Setup the Postgres table
     qualified_name = to_qualified_table_name(qdrant_collection_name)
     conn.execute(f"drop table if exists {qualified_name}")  # type: ignore
-    create_table_query = f"create table {qualified_name} (id bigint, values vector, metadata json, shard_key text, order_value text)"
+    create_table_query = (
+        f"create table {qualified_name} (id bigint, values vector, metadata json)"
+    )
     conn.execute(create_table_query)  # type: ignore
 
     # Make psycopg aware of the vector type
@@ -90,8 +92,6 @@ def migrate(
                     rec.id,
                     np.array(rec.vector),
                     rec.payload,
-                    str(rec.shard_key),
-                    str(rec.order_value),
                 )
                 for rec in batch_records
             ]
@@ -100,11 +100,11 @@ def migrate(
 
             with cur.copy(
                 f"""
-                copy {qualified_name}(id, values, metadata, shard_key, order_value)
+                copy {qualified_name}(id, values, metadata)
                 from stdin with (format binary)
                 """  # type: ignore
             ) as copy:
-                copy.set_types(["bigint", "vector", "json", "text", "text"])
+                copy.set_types(["bigint", "vector", "json"])
 
                 for rec in records:
                     copy.write_row(rec)
