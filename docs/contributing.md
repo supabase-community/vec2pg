@@ -2,7 +2,7 @@
 
 `vec2pg` is open source software. External contributions are welcome. Note that we have a high bar for testing.
 
-Before opening a PR, please [create an issue](https://github.com/supabase-community/vec2pg/issues/new/choose) in GitHub to discsus and approve the change you're interested in making.
+Before opening a PR, please [create an issue](https://github.com/supabase-community/vec2pg/issues/new/choose) in GitHub to discuss and approve the change you're interested in making.
 
 To run the tests you will need:
 
