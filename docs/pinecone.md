@@ -49,7 +49,7 @@ Then we can call `vec2pg pinecone migrate` passing our values. You can supply al
 
 ![sample output](./assets/pinecone_to_supabase_output.png)
 
-The CLI provies a progress bar to monitor the migration.
+The CLI provides a progress bar to monitor the migration.
 
 On completion, you can view a copy of the Pinecone index data in Supabase Postgres at `vec2pg.<pinecone index name>`
 
