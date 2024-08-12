@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://supabase-community.github.io/vec2pg/</loc>
+         <lastmod>2024-08-12</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://supabase-community.github.io/vec2pg/contributing/</loc>
+         <lastmod>2024-08-12</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://supabase-community.github.io/vec2pg/installation/</loc>
+         <lastmod>2024-08-12</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://supabase-community.github.io/vec2pg/pinecone/</loc>
+         <lastmod>2024-08-12</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://supabase-community.github.io/vec2pg/qdrant/</loc>
+         <lastmod>2024-08-12</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+</urlset>
