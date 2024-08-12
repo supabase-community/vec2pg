@@ -19,7 +19,7 @@ theme:
     logo: 'assets/favicon.ico'
     homepage: https://supabase-community.github.io/vec2pg
     features:
-      - navigation.expand  
+      - navigation.expand
     palette:
         primary: black
         accent: light green
