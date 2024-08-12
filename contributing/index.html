@@ -359,10 +359,14 @@
 
 
 <h1 id="contributing">Contributing</h1>
-<p>To run the tests you will need
-- Python &gt;= 3.8
-- docker
-- <a href="https://docs.pinecone.io/guides/get-started/authentication#find-your-pinecone-api-key">Pinecone API key</a></p>
+<p><code>vec2pg</code> is open source software. External contributions are welcome. Note that we have a high bar for testing.</p>
+<p>Before opening a PR, please <a href="https://github.com/supabase-community/vec2pg/issues/new/choose">create an issue</a> in GitHub to discsus and approve the change you're interested in making.</p>
+<p>To run the tests you will need:</p>
+<ul>
+<li>Python &gt;= 3.8</li>
+<li>Docker</li>
+<li><a href="https://docs.pinecone.io/guides/get-started/authentication#find-your-pinecone-api-key">Pinecone API key</a> - pinecone does not support a local mode, so we have to hit their service during testing</li>
+</ul>
 <p>The Pinecone API key should be stored as an environment variable <code>PINECONE_API_KEY</code></p>
 <p>Run the tests
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>poetry run pytest
