@@ -27,7 +27,7 @@
 
 ---
 
-`vec2pg` is a CLI for migrating data from third party vector databases to [Supabase](https://supabase.com).
+`vec2pg` is a CLI tool for migrating data from third-party vector databases to [Supabase](https://supabase.com).
 
 
 Supported data sources include:
