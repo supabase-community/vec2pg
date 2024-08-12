@@ -21,9 +21,11 @@ theme:
     features:
       - navigation.expand
     palette:
-        primary: black
-        accent: light green
-
+        scheme: slate
+        primary: green
+        accent: green
+extra_css:
+  - stylesheets/extra.css
 markdown_extensions:
     - pymdownx.highlight:
         linenums: true
