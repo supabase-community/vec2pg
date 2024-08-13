@@ -27,16 +27,19 @@
 
 ---
 
-`vec2pg` is a CLI tool for migrating data from third-party vector databases to [Supabase](https://supabase.com) with Pgvector.
+`vec2pg` is a CLI tool for migrating data from third-party vector databases to [Supabase](https://supabase.com).
 
 
 Supported data sources include:
 
-- [Pinecone](https://docs.pinecone.io/home)
-- [Qdrant](https://qdrant.tech/)
-- [Vote for others](https://github.com/supabase-community/vec2pg/issues/6)
+- [Pinecone](pinecone.md)
+- [Qdrant](qdrant.md)
+- [[Vote for others]](https://github.com/supabase-community/vec2pg/issues/6)
 
-## Usage
+The general flow involves passing an API key for your vector database, a Postgres connection string, and a reference to the collection you want to copy. `vec2pg` then presents a progress bar in the terminal that you can use to monitor progress. Once complete, the vectors and any associated metadata are available in your Postgres instance at `vec2pg.<collection_name>`.
+
+
+### Usage
 
 ```
 vec2pg --help
@@ -55,3 +58,5 @@ vec2pg --help
 │ qdrant                        Move data from Qdrant to Supabase        │
 ╰────────────────────────────────────────────────────────────────────────╯
 ```
+
+
