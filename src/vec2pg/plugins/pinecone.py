@@ -20,10 +20,10 @@ PINECONE_INDEX = "PINECONE_INDEX"
 def to_qualified_table_name(pinecone_index: str) -> str:
 
     # pinecone_index can not have quotes.
-    if not isinstance(pinecone_index, str) and not len(pinecone_index.strip()) > 0:
+    if not isinstance(pinecone_index, str) or not len(pinecone_index.strip()) > 0:
         raise Exception("pinecone_index must be a non-empty string")
     elif '"' in pinecone_index:
-        raise Exception("pinecone_index must not have quotes")
+        raise Exception("pinecone_index must not contain quotes")
 
     table_name = f"{pinecone_index}"
     return f'vec2pg."{table_name}"'
