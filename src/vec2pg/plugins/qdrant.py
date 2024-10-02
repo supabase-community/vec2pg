@@ -16,7 +16,13 @@ QDRANT_API_KEY = "QDRANT_API_KEY"
 
 
 def to_qualified_table_name(collection_name: str) -> str:
-    assert '"' not in collection_name
+
+    # collection_name can not have quotes.
+    if not isinstance(collection_name, str) or not len(collection_name.strip()) > 0:
+        raise Exception("collection_name must be a non-empty string")
+    elif '"' in collection_name:
+        raise Exception("collection_name must not contain quotes")
+
     return f'vec2pg."{collection_name}"'
 
 
