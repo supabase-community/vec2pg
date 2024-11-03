@@ -7,7 +7,7 @@ from pgvector.psycopg import register_vector
 from qdrant_client import QdrantClient
 from tqdm import tqdm
 
-from vec2pg.common import POSTGRES_CONNECTION_STRING
+from vec2pg.common import POSTGRES_CONNECTION_STRING, is_http_url
 
 app = typer.Typer()
 
@@ -35,6 +35,9 @@ def migrate(
         str, typer.Argument(envvar=POSTGRES_CONNECTION_STRING)
     ],
 ):
+
+    if not is_http_url(qdrant_url):
+        ValueError("qdrant_url must be a valid HTTP URL string")
 
     # Init Pinecone client and index
     client = QdrantClient(url=qdrant_url, api_key=qdrant_api_key)
