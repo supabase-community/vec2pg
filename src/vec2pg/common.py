@@ -1,6 +1,5 @@
 from urllib.parse import urlparse
 
-
 POSTGRES_CONNECTION_STRING = "POSTGRES_CONNECTION_STRING"
 
 
