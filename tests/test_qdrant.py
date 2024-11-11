@@ -1,5 +1,4 @@
 import warnings
-import pytest
 
 from qdrant_client import QdrantClient
 from typer.testing import CliRunner
@@ -69,7 +68,7 @@ def test_qdrant_migrate_bad_url(
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        with pytest.raises(ValueError):
+        try:
             cli_runner.invoke(
                 app,
                 [
@@ -81,3 +80,7 @@ def test_qdrant_migrate_bad_url(
                     postgres_connection_string,
                 ],
             )
+        except ValueError:
+            pass # OK
+        else:
+            raise
