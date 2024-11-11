@@ -55,3 +55,33 @@ def test_qdrant_migrate(
         f"select id, values, metadata from {qualified_name}"
     ).fetchall()
     assert len(recs) == 100
+
+
+def test_qdrant_migrate_bad_url(
+    qdrant_client: QdrantClient,
+    qdrant_collection_name: str,
+    postgres_connection_string: str,
+    cursor,
+    cli_runner: CliRunner,
+) -> None:
+    assert qdrant_client
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+
+        try:
+            cli_runner.invoke(
+                app,
+                [
+                    "qdrant",
+                    "migrate",
+                    qdrant_collection_name,
+                    "INVALID",
+                    "",  # no API key needed in :memory: mode
+                    postgres_connection_string,
+                ],
+            )
+        except ValueError as e:
+            pass
+        else:
+            raise e
