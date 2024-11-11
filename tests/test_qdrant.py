@@ -81,6 +81,6 @@ def test_qdrant_migrate_bad_url(
                 ],
             )
         except ValueError as e:
-            print("OK")
+            raise "A"
         else:
-            print("BAD")
+            raise "B"
