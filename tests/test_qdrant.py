@@ -81,4 +81,4 @@ def test_qdrant_migrate_bad_url(
                 ],
             )
         except ValueError:
-            pass # OK
+            pass  # OK
