@@ -80,7 +80,7 @@ def test_qdrant_migrate_bad_url(
                     postgres_connection_string,
                 ],
             )
-        except ValueError as e:
-            raise "A"
+        except ValueError:
+            pass # OK
         else:
-            raise "B"
+            raise
