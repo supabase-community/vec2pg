@@ -66,24 +66,21 @@ def test_qdrant_migrate_bad_url(
     cli_runner: CliRunner,
 ) -> None:
 
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+    with pytest.raises(Exception) as url_checker:
+        result = cli_runner.invoke(
+            app,
+            [
+                "qdrant",
+                "migrate",
+                qdrant_collection_name,
+                "",  # Bad HTTP URL as intended.
+                "",  # no API key needed in :memory: mode
+                postgres_connection_string,
+            ],
+        )
+        raise result.exception
 
-        with pytest.raises(Exception) as url_checker:
-            result = cli_runner.invoke(
-                app,
-                [
-                    "qdrant",
-                    "migrate",
-                    qdrant_collection_name,
-                    "",  # Bad HTTP URL as intended.
-                    "",  # no API key needed in :memory: mode
-                    postgres_connection_string,
-                ],
-            )
-            raise result.exception
-
-        assert "qdrant_url must be a valid HTTP URL string" in str(url_checker.value)
+    assert "qdrant_url must be a valid HTTP URL string" in str(url_checker.value)
 
 
 def test_is_http_url():
