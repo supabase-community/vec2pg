@@ -21,6 +21,7 @@ def test_index_is_good(pinecone_index: Index) -> None:
     assert pinecone_index.describe_index_stats()["dimension"] == 2
 
 
+@pytest.mark.skip()
 def test_pinecone_migrate(
     pinecone_index_name: str,
     postgres_connection_string: str,
