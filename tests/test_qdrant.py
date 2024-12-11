@@ -1,9 +1,11 @@
 import warnings
 
+import pytest
 from qdrant_client import QdrantClient
 from typer.testing import CliRunner
 
 from vec2pg.cli import app
+from vec2pg.common import is_http_url
 from vec2pg.plugins.qdrant import to_qualified_table_name
 
 
@@ -58,18 +60,17 @@ def test_qdrant_migrate(
 
 
 def test_qdrant_migrate_bad_url(
-    qdrant_client: QdrantClient,
     qdrant_collection_name: str,
     postgres_connection_string: str,
     cursor,
     cli_runner: CliRunner,
 ) -> None:
-    assert qdrant_client
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        try:
-            cli_runner.invoke(
+
+        with pytest.raises(Exception) as url_checker:
+            result = cli_runner.invoke(
                 app,
                 [
                     "qdrant",
@@ -80,5 +81,15 @@ def test_qdrant_migrate_bad_url(
                     postgres_connection_string,
                 ],
             )
-        except ValueError:
-            pass  # OK
+            raise result.exception
+
+        assert "qdrant_url must be a valid HTTP URL string" in str(url_checker.value)
+
+
+def test_is_http_url():
+    with pytest.raises(AssertionError) as url_checker:
+        assert is_http_url("https://supabase.com/"), "Invalid URL pattern"
+        assert is_http_url("http://localhost:8080"), "Invalid URL pattern"
+        assert is_http_url("mailto://somebody@domain.com"), "Invalid URL pattern"
+
+    assert "Invalid URL pattern" in str(url_checker.value)
