@@ -18,13 +18,11 @@ def test_client_is_good(qdrant_client: QdrantClient) -> None:
     assert qdrant_client is not None
 
 
-@pytest.mark.skip()
 def test_client_count(qdrant_client: QdrantClient, qdrant_collection_name) -> None:
     count_response = qdrant_client.count(collection_name=qdrant_collection_name)
     assert count_response.count == 100
 
 
-@pytest.mark.skip()
 def test_qdrant_migrate(
     qdrant_client: QdrantClient,
     qdrant_collection_name: str,
@@ -61,7 +59,6 @@ def test_qdrant_migrate(
     assert len(recs) == 100
 
 
-@pytest.mark.skip()
 def test_qdrant_migrate_bad_url(
     qdrant_collection_name: str,
     postgres_connection_string: str,
@@ -79,7 +76,7 @@ def test_qdrant_migrate_bad_url(
                     "qdrant",
                     "migrate",
                     qdrant_collection_name,
-                    "",  # Bad HTTP URL as intended.
+                    "INVALID",  # Bad HTTP URL as intended.
                     "",  # no API key needed in :memory: mode
                     postgres_connection_string,
                 ],
