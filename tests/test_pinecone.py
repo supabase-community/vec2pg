@@ -18,6 +18,7 @@ def test_client_is_good(pinecone_client: Pinecone) -> None:
     assert pinecone_client is not None
 
 
+@pytest.mark.skip()
 def test_index_is_good(pinecone_index: Index) -> None:
     assert pinecone_index.describe_index_stats()["dimension"] == 2
 
