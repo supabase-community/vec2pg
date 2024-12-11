@@ -9,7 +9,7 @@ from vec2pg.common import is_http_url
 from vec2pg.plugins.qdrant import to_qualified_table_name
 
 
-def test_pinecone_subcommand_does_not_error() -> None:
+def test_qdrant_subcommand_does_not_error() -> None:
     runner = CliRunner()
     runner.invoke(app, ["qdrant", "--help"])
 
@@ -89,7 +89,6 @@ def test_qdrant_migrate_bad_url(
         assert "qdrant_url must be a valid HTTP URL string" in str(url_checker.value)
 
 
-@pytest.mark.skip()
 def test_is_http_url():
     with pytest.raises(AssertionError) as url_checker:
         assert is_http_url("https://supabase.com/"), "Invalid URL pattern"
