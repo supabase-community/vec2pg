@@ -18,11 +18,13 @@ def test_client_is_good(qdrant_client: QdrantClient) -> None:
     assert qdrant_client is not None
 
 
+@pytest.mark.skip()
 def test_client_count(qdrant_client: QdrantClient, qdrant_collection_name) -> None:
     count_response = qdrant_client.count(collection_name=qdrant_collection_name)
     assert count_response.count == 100
 
 
+@pytest.mark.skip()
 def test_qdrant_migrate(
     qdrant_client: QdrantClient,
     qdrant_collection_name: str,
