@@ -1,5 +1,6 @@
 from os import environ
 
+import pytest
 from pinecone import Pinecone
 from pinecone.data.index import Index
 from typer.testing import CliRunner
